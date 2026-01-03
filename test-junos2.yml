@@ -1,0 +1,12 @@
+- name: Test Junos NETCONF connectivity
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Collect Junos facts
+      junipernetworks.junos.junos_facts:
+      register: junos_info      # <--- store facts
+
+    - name: Print Junos facts
+      debug:
+        var: junos_info           # <--- print facts
+
