@@ -1,0 +1,31 @@
+---
+- name: show bgp summary
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Gather basic facts
+      junipernetworks.junos.junos_facts:
+      register: junos_info
+
+    - name: Print data
+      debug:
+        var: junos_info
+
+    - name: Print name and ver
+      debug:
+        msg: " Device {{ junos_info.ansible_facts.ansible_net_hostname }} is runnig {{ junos_info.ansible_facts.ansible_net_version }}"
+
+    - name: Push bgp commands
+      junipernetworks.junos.junos_command:
+        commands:
+          - show bgp summary
+      register: show_bgp_summary
+
+    - name: display RAW bgp summary
+      debug:
+        var: show_bgp_summary
+
+    - name: display STDOUT
+      debug:
+        var: show_bgp_summary.stdout_lines[0]
