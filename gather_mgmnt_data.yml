@@ -1,0 +1,18 @@
+# In this playbook, we gather hostname and version from the same module used in gather-facts task
+
+
+- name: Gather Hostname and Version
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Collect Junos facts
+      junipernetworks.junos.junos_facts:
+      register: junos_info
+    - name: Print collected data
+      debug:
+        var: junos_info
+
+#Real tasks begin here
+    - name: collect requisite data
+      debug:
+        msg: "Device {{ junos_info.ansible_facts.ansible_net_hostname }} is running {{ junos_info.ansible_facts.ansible_net_version }}"
