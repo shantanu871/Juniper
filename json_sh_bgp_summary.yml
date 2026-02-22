@@ -1,6 +1,6 @@
 ---
 - name: SHow bgp summary in JSON
-  hosts: all
+  hosts: sample
   gather_facts: yes
 
   tasks:
