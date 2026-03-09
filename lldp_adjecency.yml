@@ -1,0 +1,17 @@
+---
+- name: LLDP neighbors
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: push show command
+      junipernetworks.junos.junos_command:
+        commands: 
+          - "show lldp neighbor"
+      register: sh_lldp
+
+    - name: save output in a file on server
+      copy:
+        content: "{{ sh_lldp.stdout[0] }}"
+        dest: "/root/Juniper/show_lldp_{{ inventory_hostname }}.log"
+      delegate_to: localhost
+
