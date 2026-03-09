@@ -1,0 +1,16 @@
+---
+- name: config push
+  hosts: sample
+  gather_facts: no
+  tasks:
+    - name: Push configs fro local repo
+      junipernetworks.junos.junos_config:
+        src: "/root/Juniper/{{ inventory_hostname }}.cfg"
+        update: override
+        comment: "override config pushed using Ansible"
+      register: config_push
+
+    - name: verification
+      debug:
+        msg: "override successful"
+      when: config_push.changed
