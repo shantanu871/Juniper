@@ -1,0 +1,17 @@
+---
+- name: Save configs to Ubuntu
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: 1. Get configuration from switch
+      junipernetworks.junos.junos_command:
+        commands:
+          - "show configuration"
+      register: switch_config
+
+    - name: 2. Save that text to a file on Ubuntu
+      copy:
+        content: "{{ switch_config.stdout[0] }}"
+        dest: "/root/Juniper/{{ inventory_hostname }}.cfg"
+      delegate_to: localhost

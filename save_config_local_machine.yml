@@ -1,0 +1,42 @@
+---
+- name: Save configs on local machine
+  hosts: all
+  gather_facts: yes
+  tasks:
+#      - name: Gather facts
+#      junipernetworks.junos.junos_facts:
+#      register: junos_facts
+#
+#    - name: Print gathereed data
+#      debug:
+#        var: junos_facts
+
+# The code to save configs locally starts here
+#
+    - name: get config in set format
+      junipernetworks.junos.junos_command:
+        commands: 
+          - "show configuration | save /var/tmp/{{ inventory_hostname }}_.cfg"
+      register: save_result
+
+    - name: verify
+      junipernetworks.junos.junos_command:
+        commands: 
+          - "file list /var/tmp/{{ inventory_hostname }}_.cfg"
+      register: verify
+
+    - name: Print verified results
+      debug:
+        msg:
+          - "File saved to /var/tmp/{{ inventory_hostname }}_.cfg"
+          - " Status: {{'Success' if inventory_hostname  in verify.stdout[0] else 'failed' }}"
+#####################
+#
+#
+#
+#
+#
+#
+#ouldnt get ths to wokr, so stored on ubuntu server
+
+
