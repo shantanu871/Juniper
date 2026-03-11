@@ -1,0 +1,19 @@
+---
+- name: Push site specific configs
+  hosts: all
+  gather_facts: no
+  vars:
+    site_location: NewYork
+#NewYork is default config. Use Carolina if required to push that site specific configs
+  tasks:
+    - name: "Push config for {{ site_location }}"
+      junipernetworks.junos.junos_config:
+        src: "/root/Juniper/Golden_configs/{{ site_location }}/{{ inventory_hostname }}.cfg"
+        update: override
+        comment: "Override for {{ site_location }} config by Ansible"
+      register: config
+    
+    - name: verify if configs are pushed
+      debug:
+        msg: "override sucessful"
+      when: config.changed

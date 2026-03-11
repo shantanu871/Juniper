@@ -1,0 +1,33 @@
+---
+##How to run the playbook?
+#
+#
+#by default, NewYork site location wil be used.
+#Run playboook using - 
+#ansible-playbook golden_configs.yml -e "site_location=Carolina"
+#or
+#ansible-playbook golden_configs.yml -e "site_location=NewYork"
+#
+#
+#
+- name: Store configs to appropriate directories according to geographic location
+  hosts: all
+  gather_facts: no
+  vars: 
+    site_location: NewYork
+#NY is default location
+#
+  tasks:
+    - name: "gather configs for {{ site_location }} from fabric"
+      junipernetworks.junos.junos_command:
+        commands:
+          - "show configuration"
+      register: store_config
+      vars:
+        ansible_command_timeout: 35 #Bumped timeout from 30s default to 35s as SPine 2 was timing out. This is well known variable
+
+    - name: "Storing config in {{ site_location }} dir"
+      copy:
+        content: "{{ store_config.stdout[0] }}"
+        dest: "/root/Juniper/Golden_configs/{{ site_location }}/{{ inventory_hostname }}.cfg"
+      delegate_to: localhost
