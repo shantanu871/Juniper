@@ -1,0 +1,32 @@
+#
+#This is just another variation of health_checker_formatted.yml . In here, we are going to save output in set_fact.
+#Once saved in the variabel, we wil reuse this to pritn and saeve locally, . This way, we dont have to define command_list in every module- like one
+#in debug task for 'msg' and again define same in a new- say 'SAVE LOCAL' task whci is used tro save result locally
+#
+#
+---
+- name: EVPN HC, save config to localhost
+  gather_facts: no
+  hosts: evpn_leaf
+
+  tasks:
+    - name: RUn show cmnds on hosts
+      junipernetworks.junos.junos_command:
+        commands: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+      register: health_output
+
+    - name: set facts
+      vars:
+        command_list: "{{ lookup ('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+      set_fact:
+         leaf_result: "{{ dict(command_list | zip(health_output.stdout_lines)) }}"
+    - name: Print
+      debug:
+        msg: "{{ leaf_result }}"
+    - name: store locally
+      delegate_to: localhost
+      copy:
+        dest: "./reports/{{ inventory_hostname }}_health_check.txt"
+          #content: "{{ {inventory_hostname: leaf_result} | to_nice_yaml }}"
+        content: "{{ leaf_result | to_nice_yaml }}"
+
