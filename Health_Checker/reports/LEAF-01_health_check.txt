@@ -1,0 +1,87 @@
+'  show route table ERB_TEST.evpn.0 evpn-mac-address 00:31:46:47:62:a1':
+- 'ERB_TEST.evpn.0: 18 destinations, 28 routes (18 active, 0 holddown, 0 hidden)'
+- + = Active Route, - = Last Active, * = Both
+- ''
+- '2:100.118.191.131:222::2011364::00:31:46:47:62:a1/304 MAC/IP        '
+- '                   *[EVPN/170] 1w2d 23:51:51'
+- '                       Indirect'
+- '2:100.118.191.131:222::2011364::00:31:46:47:62:a1::10.8.221.4/304 MAC/IP        '
+- '                   *[EVPN/170] 1w2d 23:51:51'
+- '                       Indirect'
+'  show route table ERB_TEST.evpn.0 evpn-mac-address 00:31:46:47:63:c1':
+- 'ERB_TEST.evpn.0: 18 destinations, 28 routes (18 active, 0 holddown, 0 hidden)'
+- + = Active Route, - = Last Active, * = Both
+- ''
+- '2:100.118.191.139:222::2011363::00:31:46:47:63:c1/304 MAC/IP        '
+- '                   *[BGP/170] 1w2d 23:46:42, localpref 100, from 100.118.191.129'
+- '                      AS path: I, validation-state: unverified'
+- '                    >  to 184.188.65.68 via ae2.0, Push 962787'
+- '                    [BGP/170] 1w2d 23:46:42, localpref 100, from 100.118.191.130'
+- '                      AS path: I, validation-state: unverified'
+- '                    >  to 184.188.65.68 via ae2.0, Push 962787'
+- '2:100.118.191.139:222::2011363::00:31:46:47:63:c1::10.8.220.5/304 MAC/IP        '
+- '                   *[BGP/170] 1w2d 23:46:42, localpref 100, from 100.118.191.129'
+- '                      AS path: I, validation-state: unverified'
+- '                    >  to 184.188.65.68 via ae2.0, Push 962787'
+- '                    [BGP/170] 1w2d 23:46:42, localpref 100, from 100.118.191.130'
+- '                      AS path: I, validation-state: unverified'
+- '                    >  to 184.188.65.68 via ae2.0, Push 962787'
+show ethernet-switching table vlan-id 1364:
+- MAC flags (S - static MAC, D - dynamic MAC, L - locally learned, P - Persistent
+    static, C - Control MAC
+- '           SE - statistics enabled, NM - non configured MAC, R - remote PE MAC,
+    O - ovsdb MAC,'
+- '           B - Blocked MAC)'
+- ''
+- ''
+- 'Ethernet switching table : 1 entries, 1 learned'
+- 'Routing instance : ERB_TEST'
+- '   Vlan                MAC                 MAC       GBP    Logical                SVLBNH/      Active'
+- '   name                address             flags     tag    interface              VENH
+    Index   source'
+- '   v1364               00:31:46:47:62:a1   DL               ae5.0'
+show evpn database mac-address 00:31:46:47:62:a1:
+- 'Instance: ERB_TEST'
+- VLAN  DomainId  MAC address        Active source                  Timestamp        IP
+    address
+- '     2011364    00:31:46:47:62:a1  00:02:01:02:01:00:05:00:00:00  Mar 30 18:53:33  10.8.221.4'
+show evpn database mac-address 00:31:46:47:63:c1:
+- 'Instance: ERB_TEST'
+- VLAN  DomainId  MAC address        Active source                  Timestamp        IP
+    address
+- '     2011363    00:31:46:47:63:c1  00:02:01:06:05:00:03:00:00:00  Mar 30 18:58:43  10.8.220.5'
+'show interfaces terse irb ':
+- Interface               Admin Link Proto    Local                 Remote
+- irb                     up    up
+- 'irb.1364                up    up   inet     10.8.221.1/24   '
+- '                                            10.8.221.2/24'
+show interfaces vtep terse:
+- Interface               Admin Link Proto    Local                 Remote
+- vtep                    up    up
+- 'vtep.32768              up    up  '
+- vtep.32769              up    up   eth-switch
+- vtep.32770              up    up   eth-switch
+- vtep.32771              up    up   eth-switch
+- vtep.32772              up    up   eth-switch
+show route table bgp.evpn.0 match-prefix *10.8.220.5*:
+- 'bgp.evpn.0: 570 destinations, 1128 routes (570 active, 0 holddown, 0 hidden)'
+- + = Active Route, - = Last Active, * = Both
+- ''
+- '2:100.118.191.139:222::2011363::00:31:46:47:63:c1::10.8.220.5/304 MAC/IP        '
+- '                   *[BGP/170] 1w2d 23:46:42, localpref 100, from 100.118.191.129'
+- '                      AS path: I, validation-state: unverified'
+- '                    >  to 184.188.65.68 via ae2.0, Push 962787'
+- '                    [BGP/170] 1w2d 23:46:42, localpref 100, from 100.118.191.130'
+- '                      AS path: I, validation-state: unverified'
+- '                    >  to 184.188.65.68 via ae2.0, Push 962787'
+show route table bgp.evpn.0 match-prefix *10.8.221.4*:
+- 'bgp.evpn.0: 570 destinations, 1128 routes (570 active, 0 holddown, 0 hidden)'
+- + = Active Route, - = Last Active, * = Both
+- ''
+- '2:100.118.191.131:222::2011364::00:31:46:47:62:a1::10.8.221.4/304 MAC/IP        '
+- '                   *[EVPN/170] 1w2d 23:51:51'
+- '                       Indirect'
+show vlans v1364:
+- Routing instance        VLAN name             Tag          Interfaces
+- 'ERB_TEST                v1364                 1364     '
+- '                                                           ae5.0*'

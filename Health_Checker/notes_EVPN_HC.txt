@@ -1,0 +1,65 @@
+The inefficient way-
+
+---
+- name: EVPN health checker (Inefficient Version)
+  hosts: evpn_leaf
+  gather_facts: no
+
+  tasks:
+    - name: send show commands to fabric
+      junipernetworks.junos.junos_command:
+        commands: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+      register: health_output
+
+    - name: Display results to terminal
+      vars:
+        # LOGIC REPEATED HERE
+        command_list: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+      debug:
+        msg: "{{ dict(command_list | zip(health_output.stdout_lines)) }}"
+
+    - name: Save results to Ubuntu localhost
+      delegate_to: localhost
+      vars:
+        # LOGIC REPEATED HERE AGAIN
+        command_list: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+      copy:
+        dest: "./reports/{{ inventory_hostname }}_health_report.txt"
+        # LOGIC REPEATED IN THE CONTENT FIELD
+        content: "{{ dict(command_list | zip(health_output.stdout_lines)) | nice_yaml }}"
+
+
+
+---------------------------------------------------------------------------
+
+The eficient way- although an extra module
+
+- name: EVPN health checker
+  hosts: evpn_leaf
+  gather_facts: no
+
+  tasks:
+    - name: send show commands to fabric
+      junipernetworks.junos.junos_command:
+        commands: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+      register: health_output
+
+    - name: Create Health Data Dictionary
+      # This is where we "save" the result into a reusable variable
+      set_fact:
+        leaf_results: "{{ dict(command_list | zip(health_output.stdout_lines)) }}"
+      vars:
+        command_list: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+
+    - name: Display results to terminal
+      debug:
+        msg: "{{ leaf_results }}"
+
+    - name: Save results to Ubuntu localhost
+      delegate_to: localhost
+      copy:
+        dest: "./reports/{{ inventory_hostname }}_health_report.txt"
+        # We use the 'leaf_results' fact we created above
+        content: "{{ { inventory_hostname: leaf_results } | nice_yaml }}"
+		
+		
