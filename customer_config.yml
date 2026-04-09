@@ -1,3 +1,13 @@
+# This playbook will push/ configure the fabric. The configs will be pulled from the location mentioned in 'src' variable.
+# use ansible-playbook customer_config.yml -e "site_location=Carolina"  to push carolina configs or
+#
+#ansible-playbook customer_config.yml -e "site_location=NewYork" for NY configs
+#
+#**************************************************
+#If BGP doesnt come up, a reboot might be required*
+#**************************************************
+#
+
 ---
 - name: Push site specific configs
   hosts: all

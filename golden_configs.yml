@@ -1,12 +1,13 @@
 ---
 ##How to run the playbook?
+# This playbook is used to save chassis configs on local ubuntu server
 #
+#By default, NewYork site location will be used.
 #
-#by default, NewYork site location wil be used.
 #Run playboook using - 
-#ansible-playbook golden_configs.yml -e "site_location=Carolina"
+#ansible-playbook golden_configs.yml -e "site_location=Carolina"<<This will save config in NewYork folder on server
 #or
-#ansible-playbook golden_configs.yml -e "site_location=NewYork"
+#ansible-playbook golden_configs.yml -e "site_location=NewYork"<<This will save configs in Carolina folder on server
 #
 #
 #
@@ -24,7 +25,7 @@
           - "show configuration"
       register: store_config
       vars:
-        ansible_command_timeout: 35 #Bumped timeout from 30s default to 35s as SPine 2 was timing out. This is well known variable
+        ansible_command_timeout: 35 #Bumped timeout from 30s default to 35s as Spine 2 was timing out. This is a well known variable
 
     - name: "Storing config in {{ site_location }} dir"
       copy:
