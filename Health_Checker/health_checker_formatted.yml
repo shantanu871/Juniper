@@ -1,0 +1,71 @@
+#
+#This playbook is a classic example of Operational State Automation. Instead of manually logging into LEAF-01 and LEAF-05, we. are using Ansible to scrape CLI data, correlate it with your commands, and present it as a structured data object.
+#Here is the breakdown :
+  #
+#1. Play Definition
+#YAML
+#- name: EVPN health checker
+#  hosts: evpn_leaf
+#  gather_facts: no
+#hosts: evpn_leaf: This defines the scope. Ansible will run every task in this play for every device listed under this group in your inventory file.
+#
+#gather_facts: no: Essential for network devices. By default, Ansible tries to SSH into a Linux host to find things like CPU/RAM info. Since these are Juniper switches, we skip this to save time and prevent connection errors.
+###
+#2. Task: Gathering CLI Data
+#YAML
+#- name: send show commands to fabric
+# junipernetworks.junos.junos_command:
+#  commands: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+#  register: health_output
+#The Module: junos_command sends raw CLI strings to the Junos device.
+#
+#The Logic:
+#
+#lookup('template', 'commands.j2'): Reads your text file containing the show commands.
+#
+#.splitlines(): Turns that file into a Python list of strings.
+#
+#select('search', '\\S'): A filter that removes empty lines (regex for "non-whitespace").
+#
+##register: health_output: This is the most important part. It captures the CLI responses and saves them into a variable named health_output. The actual text lives in health_output.stdout_lines.
+###
+#3. Task: Data Correlation (The "Zip")
+#YAML
+#- name: Zip show commands with output
+#  vars:
+#    command_list: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+#  debug:
+#    msg: "{{ dict(command_list | zip(health_output.stdout_lines)) }}"
+#The vars block: We repeat the lookup here to create a list of the questions (the commands).
+#
+#health_output.stdout_lines: This is a list of the answers (the command output).
+#
+#zip(...): This is a Python function that pairs them together. It takes command[0] and pairs it with output[0], then command[1] with output[1].
+#
+#dict(...): Converts those pairs into a Dictionary (Key:Value).
+#
+#Key: The command (e.g., show vlans v1363)
+#
+#Value: The result (The CLI output text)
+#
+#debug: Prints this final, organized "Map" to your terminal.
+#####
+
+---
+- name: EVPN health checker
+  hosts: evpn_leaf
+  gather_facts: no
+
+
+  tasks:
+    - name: send show commands to fabric 
+      junipernetworks.junos.junos_command:
+        commands: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+      register: health_output
+
+    - name: Zip show commands with output
+      vars:
+        command_list: "{{ lookup('template', 'commands.j2').splitlines() | select('search', '\\S') | list }}"
+      debug:
+        msg:  "{{ dict(command_list | zip(health_output.stdout_lines)) }}"
+      

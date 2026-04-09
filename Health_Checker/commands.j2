@@ -1,0 +1,33 @@
+
+{# SHOW VLANS #}
+{% for VLAN_ID in target_vlans %}
+show vlans v{{ VLAN_ID }}
+{% endfor %}
+
+{# show vtep and IRB #}
+show interfaces vtep terse
+show interfaces terse irb 
+
+{# show eth_switching_table #}
+{% for VLAN_ID in target_vlans %}
+show ethernet-switching table vlan-id {{ VLAN_ID }}
+{% endfor %}
+
+{# show evpn database #}
+{% for MAC in target_macs %}
+show evpn database mac-address {{ MAC }}
+{% endfor %}
+
+{# show route in bgp table #}
+{% for IP in target_ips %}
+show route table bgp.evpn.0 match-prefix *{{ IP }}*
+{% endfor %}
+
+{# Nested loop for EVPn MAC check under RI #}
+{% for RI in routing_instance %}
+ {% for MAC in target_macs %}
+ show route table {{ RI }}.evpn.0 evpn-mac-address {{ MAC }}
+ {% endfor %}
+{% endfor %}
+
+

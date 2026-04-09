@@ -1,0 +1,4 @@
+---
+routing_instance: ["ERB_TEST"]
+target_ips: ["10.8.221.4", "10.8.220.5"]
+target_macs: ["00:31:46:47:62:a1", "00:31:46:47:63:c1"]

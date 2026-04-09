@@ -1,0 +1,5 @@
+---
+target_vlans: ["1364"]
+target_subnets_transit_vni: ["10.8.221.0/24"]
+
+
