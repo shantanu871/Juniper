@@ -1,0 +1,11 @@
+---
+- name: provision VLANS and IRB on host
+  hosts: EX_ROCKET
+  gather_facts: no
+
+
+  tasks:
+    - name: Push config to DUT
+      junipernetworks.junos.junos_config:
+        lines: "{{ lookup('template', 'loop.j2') }}"
+        comment: "CLI less provisioning for {{ inventory_hostname }}"

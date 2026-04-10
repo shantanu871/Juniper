@@ -1,0 +1,6 @@
+{% for vlan in demo_vlans %}
+set vlans {{ vlan.name }} vlan-id {{ vlan.vlan_id }}
+set vlans {{ vlan.name }} l3-interface irb.{{ vlan.vlan_id }}
+set interfaces irb.{{ vlan.vlan_id }} family inet address {{ vlan.ip }}
+{% endfor %}
+

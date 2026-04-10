@@ -1,0 +1,15 @@
+#dict of 3 lists  and list is a dict of 3 key value pair
+
+---
+demo_vlans:
+  - vlan_id: 100
+    name: v100
+    ip: 10.100.1.1/30
+
+  - vlan_id: 200
+    name: v200
+    ip: 10.200.1.1/24
+
+  - vlan_id: 300
+    name: v300
+    ip: 10.230.1.1/30
