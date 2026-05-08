@@ -1,6 +1,6 @@
 - name: Test Junos NETCONF connectivity
   hosts: all
-  gather_facts: yes
+  gather_facts: no
   tasks:
     - name: Collect Junos facts
       junipernetworks.junos.junos_facts:
