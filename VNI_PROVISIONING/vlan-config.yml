@@ -1,6 +1,6 @@
 ---
 - name: provision VLANS and IRB on host
-  hosts: EX_ROCKET
+  hosts: EX_ROCKET, EX_SIMBA
   gather_facts: no
 
 
